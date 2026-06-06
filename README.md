@@ -42,6 +42,11 @@ A global biodiversity sentinel project focused on rare and endangered species. T
    docker exec -it ark-backend php artisan key:generate
    docker exec -it ark-backend php artisan migrate
    ```
+5. **Test Database Connection**
+   Run this command
+   ```bash
+   docker exec -it ark-db psql -U ark_user -d ark_registry
+   ```
 
 ### 🛠 Docker Architecture
 The project uses a streamlined two-container architecture:
