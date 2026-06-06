@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import speciesRoutes from "./routes/species.routes";
+import { errorHandler } from "./middleware/error.middleware";
 
 dotenv.config();
 
@@ -23,6 +24,8 @@ app.get("/", (req: Request, res: Response) => {
 app.get("/health", (req: Request, res: Response) => {
     res.json({ status: "OK" });
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
