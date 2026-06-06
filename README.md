@@ -49,8 +49,9 @@ A global biodiversity sentinel project focused on rare and endangered species. T
 
 ### 🛠 Docker Architecture
 
-The project uses a streamlined two-container architecture:
+The project uses a streamlined three-container architecture:
 
+- **`nginx`**: A reverse proxy that handles incoming HTTP requests and forwards them to the backend.
 - **`backend`**: A Node.js/TypeScript environment running Express to handle application logic and API requests.
 - **`database`**: A PostGIS-enabled PostgreSQL instance for spatial data storage.
 
@@ -60,6 +61,9 @@ The project uses a streamlined two-container architecture:
 - **View logs**: `docker-compose logs -f`
 - **Restart backend**: `docker-compose restart backend`
 - **Shell access**: `docker exec -it ark-backend sh`
+- **Rebuild specific service**: `docker-compose build <service-name>`
+- **Rebuild and restart**: `docker-compose up -d --build`
+- **View container status**: `docker-compose ps`
 
 ## 🔒 Security Features
 
