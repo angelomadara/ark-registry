@@ -65,6 +65,28 @@ The project uses a streamlined three-container architecture:
 - **Rebuild and restart**: `docker-compose up -d --build`
 - **View container status**: `docker-compose ps`
 
+### 🗄 Database & ORM (Prisma)
+
+This project uses **Prisma** as the Object-Relational Mapper (ORM) to interact with the PostgreSQL/PostGIS database.
+
+#### Prisma Setup
+
+If you are developing locally outside of Docker or need to manage the schema:
+
+1. Ensure your `.env` file has the correct `DATABASE_URL`.
+2. Generate the Prisma Client:
+    ```bash
+    npx prisma generate
+    ```
+
+#### Useful Prisma Commands
+
+- **Apply schema changes**: `npx prisma migrate dev --name <migration_name>`
+- **Reset database**: `npx prisma migrate reset`
+- **Introspect database**: `npx prisma db pull`
+- **Open Prisma Studio (GUI)**: `npx prisma studio`
+- **Validate schema**: `npx prisma validate`
+
 ## 🔒 Security Features
 
 - **EXIF Stripping**: All uploaded media is processed to remove sensitive metadata.

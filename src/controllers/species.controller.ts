@@ -16,7 +16,11 @@ class SpeciesController extends BaseController {
 
     async getById(req: Request, res: Response, next: any) {
         try {
-            const species = await speciesService.getSpeciesById(req.params.id);
+            const id = parseInt(req.params.id, 10);
+            if (isNaN(id)) {
+                return this.sendBadRequest(res, "Invalid species ID");
+            }
+            const species = await speciesService.getSpeciesById(id);
             if (!species) {
                 return this.sendNotFound(res, "Species not found");
             }
