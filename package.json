@@ -1,32 +1,29 @@
 {
-  "name": "the-ark-registry",
-  "version": "1.0.0",
-  "description": "Backend for The Ark Registry",
-  "main": "dist/index.js",
-  "scripts": {
-    "start": "node dist/index.js",
-    "dev": "ts-node-dev --respawn src/index.ts",
-    "build": "tsc"
-  },
-  "dependencies": {
-<<<<<<< Updated upstream
-    "@prisma/adapter-pg": "^7.8.0",
-=======
->>>>>>> Stashed changes
-    "@prisma/client": "^7.8.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "express-validator": "^7.3.2",
-    "pg": "^8.21.0"
-  },
-  "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.19.42",
-    "@types/pg": "^8.10.2",
-    "prisma": "^7.8.0",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3"
-  }
+    "name": "the-ark-registry",
+    "version": "1.0.0",
+    "description": "Backend for The Ark Registry",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "node dist/index.js",
+        "dev": "ts-node-dev --respawn src/index.ts",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@prisma/adapter-pg": "^7.8.0",
+        "@prisma/client": "^7.8.0",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "express-validator": "^7.3.2",
+        "pg": "^8.21.0"
+    },
+    "devDependencies": {
+        "@types/cors": "^2.8.17",
+        "@types/express": "^4.17.21",
+        "@types/node": "^20.19.42",
+        "@types/pg": "^8.10.2",
+        "prisma": "^7.8.0",
+        "ts-node-dev": "^2.0.0",
+        "typescript": "^5.3.3"
+    }
 }
