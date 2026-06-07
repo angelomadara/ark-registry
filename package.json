@@ -9,7 +9,10 @@
     "build": "tsc"
   },
   "dependencies": {
+<<<<<<< Updated upstream
     "@prisma/adapter-pg": "^7.8.0",
+=======
+>>>>>>> Stashed changes
     "@prisma/client": "^7.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
