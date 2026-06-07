@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Species {
+  id                Int           @id @default(autoincrement())
+  scientificName    String        @map("scientific_name")
+  genus             String
+  specificEpithet   String        @map("specific_epithet")
+  commonName        String        @map("common_name")
+  iucnStatus        String        @map("iucn_status")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  deletedAt         DateTime?     @map("deleted_at")
+  lastSeenLocation  Unsupported("geometry(Point, 4326)")
+
+  localNames        SpeciesLocalName[]
+  
+  @@map("species")
+}
+
+model SpeciesLocalName {
+  id                Int           @id @default(autoincrement())
+  speciesId         Int           @map("species_id")
+  localName         String        @map("local_name")
+  country           String
+  provinceOrRegion   String        @map("province_or_region")
+  languageOrDialect  String        @map("language_or_dialect")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+  deletedAt         DateTime?     @map("deleted_at")
+  
+  species           Species       @relation(fields: [speciesId], references: [id])
+
+  @@map("species_local_names")
+}

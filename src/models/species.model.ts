@@ -1,23 +1,23 @@
 export interface Species {
     id: number;
-    scientific_name: string;
+    scientificName: string;
     genus: string;
-    specific_epithet: string;
-    common_name: string;
-    iucn_status: string;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at?: Date | null;
+    specificEpithet: string;
+    commonName: string;
+    iucnStatus: string;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt?: Date | null;
 }
 
 export interface SpeciesLocalName {
     id: number;
-    species_id: number;
-    local_name: string;
+    speciesId: number;
+    localName: string;
     country: string;
-    province_or_region: string;
-    language_or_dialect: string;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at?: Date | null;
+    provinceOrRegion: string;
+    languageOrDialect: string;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt?: Date | null;
 }
