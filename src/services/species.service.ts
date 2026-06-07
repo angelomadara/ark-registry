@@ -8,7 +8,7 @@ export class SpeciesService {
                 deletedAt: null,
             },
             orderBy: {
-                id: 'asc',
+                id: "asc",
             },
         });
     }
@@ -22,7 +22,10 @@ export class SpeciesService {
     }
 
     async createSpecies(
-        speciesData: Omit<Species, "id" | "createdAt" | "updatedAt" | "deletedAt">,
+        speciesData: Omit<
+            Species,
+            "id" | "createdAt" | "updatedAt" | "deletedAt"
+        >,
     ): Promise<Species> {
         const {
             scientific_name,
@@ -31,7 +34,7 @@ export class SpeciesService {
             common_name,
             iucn_status,
         } = speciesData as any;
-        
+
         return await prisma.species.create({
             data: {
                 scientificName: scientific_name,
