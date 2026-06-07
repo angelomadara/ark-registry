@@ -1,3 +1,4 @@
+/dist
 *.log
 .DS_Store
 .env
@@ -27,4 +28,3 @@ Homestead.yaml
 Thumbs.db
 UPDATE.md
 
-/src/generated/prisma
