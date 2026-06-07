@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import pool from "./config/database";
 import speciesRoutes from "./routes/species.routes";
 import { errorHandler } from "./middleware/error.middleware";
 
@@ -11,6 +12,16 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Test database connection
+pool.connect((err, conn) => {
+    if (err) {
+        console.error("Error acquiring client", err.stack);
+    } else {
+        console.log("Successfully connected to PostgreSQL database");
+        conn?.release();
+    }
+});
 
 app.use("/api/species", speciesRoutes);
 
