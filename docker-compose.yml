@@ -1,0 +1,55 @@
+services:
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: ark-backend
+        restart: unless-stopped
+        working_dir: /app
+        volumes:
+            - .:/app
+            - /app/node_modules
+            - /app/dist
+        networks:
+            - ark-network
+        depends_on:
+            - database
+        environment:
+            - NODE_ENV=production
+            - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@ark-db:5432/${POSTGRES_DB}
+
+    database:
+        platform: linux/amd64
+        image: postgis/postgis:latest
+        container_name: ark-db
+        restart: unless-stopped
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        environment:
+            - POSTGRES_DB=${POSTGRES_DB}
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        networks:
+            - ark-network
+        ports:
+            - "5432:5432"
+
+    nginx:
+        image: nginx:latest
+        container_name: ark-nginx
+        restart: unless-stopped
+        ports:
+            - "80:80"
+        volumes:
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+        networks:
+            - ark-network
+        depends_on:
+            - backend
+
+networks:
+    ark-network:
+        driver: bridge
+
+volumes:
+    postgres_data:
