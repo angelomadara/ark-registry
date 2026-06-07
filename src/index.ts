@@ -1,0 +1,32 @@
+import express, { Request, Response } from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import speciesRoutes from "./routes/species.routes";
+import { errorHandler } from "./middleware/error.middleware";
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+
+app.use("/api/species", speciesRoutes);
+
+app.get("/", (req: Request, res: Response) => {
+    res.json({
+        message: "Welcome to The Ark Registry API",
+        status: "Online",
+    });
+});
+
+app.get("/health", (req: Request, res: Response) => {
+    res.json({ status: "OK" });
+});
+
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
