@@ -19,7 +19,6 @@ services:
             - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@ark-db:5432/${POSTGRES_DB}
 
     database:
-        # platform: linux/amd64
         image: postgis/postgis:latest
         container_name: ark-db
         restart: unless-stopped

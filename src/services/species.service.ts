@@ -33,9 +33,14 @@ export class SpeciesService {
             specific_epithet,
             common_name,
             iucn_status,
+            last_seen_location,
         } = speciesData as any;
 
-        return await prisma.species.create({
+        // PostGIS geometry requires ST_GeomFromText or similar.
+        // Since Prisma doesn't natively support Geometry types via .create(), 
+        // we execute a raw query to handle the spatial data.
+        
+        const species = await prisma.species.create({
             data: {
                 scientificName: scientific_name,
                 genus: genus,
@@ -43,6 +48,18 @@ export class SpeciesService {
                 commonName: common_name,
                 iucnStatus: iucn_status,
             },
-        });
+        }) as any;
+
+        if (last_seen_location) {
+            await prisma.$executeRawUnsafe(
+                `UPDATE species SET last_seen_location = ST_GeomFromText($1, 4326) WHERE id = $2`,
+                last_seen_location,
+                species.id
+            );
+        }
+
+        const result = await this.getSpeciesById(species.id);
+        if (!result) throw new Error("Species not found after creation");
+        return result;
     }
 }

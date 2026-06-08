@@ -5,6 +5,7 @@ export interface Species {
     specificEpithet: string;
     commonName: string;
     iucnStatus: string;
+    lastSeenLocation?: any;
     createdAt: Date;
     updatedAt: Date;
     deletedAt?: Date | null;

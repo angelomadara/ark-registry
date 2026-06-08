@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Species {
@@ -17,7 +16,8 @@ model Species {
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
   deletedAt       DateTime? @map("deleted_at")
-  // lastSeenLocation Unsupported("geometry(Point, 4326)")
+  lastSeenLocation Unsupported("geometry(Point, 4326)")
+
 
   localNames SpeciesLocalName[]
 
