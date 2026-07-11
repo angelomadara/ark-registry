@@ -1,9 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+export interface IPaginationOptions {
+    page: number;
+    limit: number;
+}
 
-export interface IApiResponse<T = any> {
+export interface IApiResponse<T = unknown> {
     success: boolean;
-    message?: string;
+    message: string;
     data?: T;
-    count?: number;
-    errors?: any[];
+    errors?: unknown[];
 }

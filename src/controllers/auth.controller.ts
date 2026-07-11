@@ -1,4 +1,5 @@
 import { Response, NextFunction } from "express";
+import { body } from "express-validator";
 import jwt from "jsonwebtoken";
 import BaseController from "./base.controller";
 import { AuthService } from "../services/auth.service";
@@ -9,23 +10,15 @@ const authService = new AuthService();
 class AuthController extends BaseController {
     async register(req: AuthRequest, res: Response, next: NextFunction) {
         try {
+            const validationErrors = await this.validate(req, [
+                body("username").notEmpty().isLength({ min: 3 }).withMessage("Username must be at least 3 characters"),
+                body("password").notEmpty().isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
+            ]);
+            if (validationErrors) {
+                return this.sendValidationError(res, validationErrors);
+            }
+
             const { username, password } = req.body;
-
-            // Validate username
-            if (!username || username.length < 3) {
-                return this.sendBadRequest(
-                    res,
-                    "Username is required and must be at least 3 characters",
-                );
-            }
-
-            // Validate password
-            if (!password || password.length < 6) {
-                return this.sendBadRequest(
-                    res,
-                    "Password is required and must be at least 6 characters",
-                );
-            }
 
             // Check if username already exists
             const existingUser = await authService.findByUsername(username);

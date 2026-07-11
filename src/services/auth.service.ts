@@ -1,43 +1,28 @@
 import bcrypt from "bcryptjs";
-import { query } from "../config/database";
 import { User } from "../models/user.model";
+import { PgUserRepository } from "../repositories/postgres/PgUserRepository";
 
 export class AuthService {
-    async create(
-        username: string,
-        password: string,
-        role: string = "user",
-    ): Promise<User> {
+    private repo: PgUserRepository;
+
+    constructor(repo?: PgUserRepository) {
+        this.repo = repo || new PgUserRepository();
+    }
+
+    async create(username: string, password: string, role: string = "user"): Promise<User> {
         const password_hash = await bcrypt.hash(password, 10);
-        const result = await query(
-            `INSERT INTO users (username, password_hash, role)
-             VALUES ($1, $2, $3)
-             RETURNING *`,
-            [username, password_hash, role],
-        );
-        return result.rows[0];
+        return this.repo.create({ username, password_hash, role } as any);
     }
 
     async findByUsername(username: string): Promise<User | null> {
-        const result = await query(
-            "SELECT * FROM users WHERE username = $1 AND deleted_at IS NULL",
-            [username],
-        );
-        return result.rows[0] || null;
+        return this.repo.findByUsername(username);
     }
 
     async findById(id: number): Promise<User | null> {
-        const result = await query(
-            "SELECT * FROM users WHERE id = $1 AND deleted_at IS NULL",
-            [id],
-        );
-        return result.rows[0] || null;
+        return this.repo.findById(id);
     }
 
-    async validatePassword(
-        plainPassword: string,
-        hash: string,
-    ): Promise<boolean> {
+    async validatePassword(plainPassword: string, hash: string): Promise<boolean> {
         return bcrypt.compare(plainPassword, hash);
     }
 }
