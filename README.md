@@ -19,73 +19,73 @@ A global biodiversity sentinel project focused on rare and endangered species. T
     ```
 
 2. **Environment Configuration**
-   Create a `.env` file in the root directory with the following variables:
+   Create a `.env` file in the root directory. You can use `.env.example` as a starting point:
 
-    ```env
-    POSTGRES_DB=ark_registry
-    POSTGRES_USER=ark_user
-    POSTGRES_PASSWORD=ark_password
+    ```bash
+    cp .env.example .env
     ```
+   **Note:** When running via Docker, ensure `DB_HOST=ark-db` in your `.env` file to allow the backend to communicate with the database container.
 
 3. **Launch the Application**
    Start the containers in detached mode:
 
     ```bash
-    docker-compose up -d
+    docker compose up -d --build
     ```
 
-4. **Initialize the Application**
-   The application is configured to run via Docker. To start the development environment:
+4. **Verify Deployment**
+   The backend is mapped to host port `3080`. Test the connection:
 
     ```bash
-    docker exec -it ark-backend npm run dev
+    curl http://localhost:3080/
     ```
 
-5. **Test Database Connection**
-   Run this command to verify the PostGIS database is accessible:
-    ```bash
-    docker exec -it ark-db psql -U ark_user -d ark_registry
-    ```
+### 🛠 Architecture
 
-### 🛠 Docker Architecture
+#### Production Deployment
+The production environment utilizes a host-level Nginx reverse proxy for security and performance:
 
-The project uses a streamlined three-container architecture:
+`Internet` $\rightarrow$ `Cloudflare (proxy)` $\rightarrow$ `Host Nginx (:443)`
+- **SSL**: Managed via Let's Encrypt (Certbot).
+- **Rate Limiting**: 60 requests/minute with a burst of 10.
+- **Backend Proxy**: Traffic is forwarded to `localhost:3080`.
 
-- **`nginx`**: A reverse proxy that handles incoming HTTP requests and forwards them to the backend.
-- **`backend`**: A Node.js/TypeScript environment running Express to handle application logic and API requests.
-- **`database`**: A PostGIS-enabled PostgreSQL instance for spatial data storage.
+#### Docker Stack (Development/Backend)
+The application runs as a two-container stack:
+- **`backend`**: Node.js/TypeScript Express app (port 3000), mapped to host port 3080.
+- **`database`**: PostGIS-enabled PostgreSQL 16 (port 5432).
 
 ### 📦 Useful Commands
 
-- **Stop application**: `docker-compose down`
-- **View logs**: `docker-compose logs -f`
-- **Restart backend**: `docker-compose restart backend`
+- **Start**: `docker compose up -d`
+- **Stop**: `docker compose down`
+- **Rebuild**: `docker compose up -d --build`
+- **View logs**: `docker compose logs -f`
 - **Shell access**: `docker exec -it ark-backend sh`
-- **Rebuild specific service**: `docker-compose build <service-name>`
-- **Rebuild and restart**: `docker-compose up -d --build`
-- **View container status**: `docker-compose ps`
 
-### 🗄 Database & ORM (Prisma)
+### 🗄 Database & Migrations
 
-This project uses **Prisma** as the Object-Relational Mapper (ORM) to interact with the PostgreSQL/PostGIS database.
+This project uses the raw `pg` (node-postgres) driver for direct interaction with the PostgreSQL/PostGIS database, ensuring maximum control over spatial queries.
 
-#### Prisma Setup
+#### Tech Stack
+- **Runtime**: Node.js 20
+- **Language**: TypeScript
+- **Framework**: Express.js
+- **Database**: PostgreSQL 16 + PostGIS 3
+- **Driver**: `pg` (node-postgres)
 
-If you are developing locally outside of Docker or need to manage the schema:
+#### Running Migrations
+Database schema changes are managed via SQL files located in the `/migrations/` directory.
 
-1. Ensure your `.env` file has the correct `DATABASE_URL`.
-2. Generate the Prisma Client:
-    ```bash
-    npx prisma generate
-    ```
+**Via Docker (Recommended):**
+```bash
+docker exec -it ark-backend sh -c 'PGPASSWORD=$PGPASSWORD psql -h ark-db -U $PGUSER -d $DB -f migrations/001_create_species_tables.sql'
+```
 
-#### Useful Prisma Commands
-
-- **Apply schema changes**: `npx prisma migrate dev --name <migration_name>`
-- **Reset database**: `npx prisma migrate reset`
-- **Introspect database**: `npx prisma db pull`
-- **Open Prisma Studio (GUI)**: `npx prisma studio`
-- **Validate schema**: `npx prisma validate`
+**Via Local Host (if DB port is mapped):**
+```bash
+PGPASSWORD=ark_password psql -h 127.0.0.1 -U ark_user -d ark_registry -f migrations/001_create_species_tables.sql
+```
 
 ## 🔒 Security Features
 

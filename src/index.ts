@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pool from "./config/database";
 import speciesRoutes from "./routes/species.routes";
+import authRoutes from "./routes/auth.routes";
 import { errorHandler } from "./middleware/error.middleware";
 
 dotenv.config();
@@ -23,6 +24,7 @@ pool.connect((err, conn) => {
     }
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/species", speciesRoutes);
 
 app.get("/", (req: Request, res: Response) => {
