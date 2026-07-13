@@ -8,7 +8,6 @@ services:
         working_dir: /app
         volumes:
             - .:/app
-            - /app/node_modules
         networks:
             - ark-network
         depends_on:
@@ -33,11 +32,12 @@ services:
         networks:
             - ark-network
         ports:
-            - "5432:5432"
+            - "5433:5432"
 
 networks:
     ark-network:
         driver: bridge
+        name: ark-network
 
 volumes:
     postgres_data:

@@ -22,9 +22,10 @@
 /storage/*.key
 /storage/pail
 /vendor
+/uploads
+
 _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
 UPDATE.md
-
