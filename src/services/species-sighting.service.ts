@@ -10,11 +10,12 @@ export class SpeciesSightingService {
 
     async create(data: {
         user_id: string;
-        species_id?: number | null;
+        name: string;
+        notes?: string | null;
         image_path: string;
         latitude?: number | null;
         longitude?: number | null;
-        notes?: string | null;
+        date_taken: string;
     }): Promise<SpeciesSighting> {
         return this.repo.create(data as any);
     }

@@ -13,9 +13,8 @@ export class PgSpeciesSightingRepository
 
     async getAllWithSpecies(): Promise<SpeciesSighting[]> {
         const result = await query(
-            `SELECT ss.*, s.scientific_name, s.common_name
+            `SELECT ss.*
              FROM species_sightings ss
-             LEFT JOIN species s ON ss.species_id = s.id
              WHERE ss.deleted_at IS NULL
              ORDER BY ss.created_at DESC`,
         );

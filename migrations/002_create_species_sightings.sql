@@ -1,3 +1,5 @@
+-- migrate:up
+
 -- Create Species Sightings Table
 CREATE TABLE IF NOT EXISTS species_sightings (
     id SERIAL PRIMARY KEY,
@@ -14,3 +16,7 @@ CREATE TABLE IF NOT EXISTS species_sightings (
 
 CREATE INDEX IF NOT EXISTS idx_species_sightings_user_id ON species_sightings(user_id);
 CREATE INDEX IF NOT EXISTS idx_species_sightings_species_id ON species_sightings(species_id);
+
+-- migrate:down
+
+DROP TABLE IF EXISTS species_sightings;

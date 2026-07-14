@@ -16,7 +16,7 @@ services:
             - "3080:3000"
         environment:
             - NODE_ENV=production
-            - DATABASE_URL=postgresql://${POSTGRES_USER}:***@ark-db:5432/${POSTGRES_DB}
+            - DATABASE_URL=postgresql://ark_user:ark_password@ark-db:5432/ark_registry
 
     database:
         platform: linux/amd64

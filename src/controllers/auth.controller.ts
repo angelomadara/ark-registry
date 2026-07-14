@@ -1,19 +1,19 @@
 import { Response, NextFunction } from "express";
-import { body } from "express-validator";
 import jwt from "jsonwebtoken";
 import BaseController from "./base.controller";
 import { AuthService } from "../services/auth.service";
 import { AuthRequest } from "../middleware/auth.middleware";
+import {
+    validateRegister,
+    validateLogin,
+} from "../middleware/requests/auth.requests";
 
 const authService = new AuthService();
 
 class AuthController extends BaseController {
     async register(req: AuthRequest, res: Response, next: NextFunction) {
         try {
-            const validationErrors = await this.validate(req, [
-                body("username").notEmpty().isLength({ min: 3 }).withMessage("Username must be at least 3 characters"),
-                body("password").notEmpty().isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
-            ]);
+            const validationErrors = await this.validate(req, validateRegister);
             if (validationErrors) {
                 return this.sendValidationError(res, validationErrors);
             }
@@ -37,14 +37,12 @@ class AuthController extends BaseController {
 
     async login(req: AuthRequest, res: Response, next: NextFunction) {
         try {
-            const { username, password } = req.body;
-
-            if (!username || !password) {
-                return this.sendBadRequest(
-                    res,
-                    "Username and password are required",
-                );
+            const validationErrors = await this.validate(req, validateLogin);
+            if (validationErrors) {
+                return this.sendValidationError(res, validationErrors);
             }
+
+            const { username, password } = req.body;
 
             const user = await authService.findByUsername(username);
             if (!user) {
