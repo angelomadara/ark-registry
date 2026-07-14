@@ -5,7 +5,7 @@ import BaseController from "./base.controller";
 import { SpeciesSightingService } from "../services/species-sighting.service";
 import r2Client, { R2_BUCKET, R2_PUBLIC_URL } from "../config/r2";
 import path from "path";
-import { validateRegisterSighting } from "../middleware/requests/species-sighting.requests";
+import { validateRegisterSighting } from "../middleware/validators/species-sighting.validator";
 
 export class SpeciesSightingController extends BaseController {
 

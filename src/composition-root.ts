@@ -10,20 +10,23 @@
 import { AuthController } from "./controllers/auth.controller";
 import { SpeciesSightingController } from "./controllers/species-sighting.controller";
 import { SpeciesController } from "./controllers/species.controller";
+import { PgSpeciesRepository, PgSpeciesSightingRepository, PgUserRepository } from "./repositories";
 import { AuthService } from "./services/auth.service";
 import { SpeciesSightingService } from "./services/species-sighting.service";
 import { SpeciesService } from "./services/species.service";
 
 // ── Repositories ────────────────────────────────────
-
+const userRepository = new PgUserRepository()
+const speciesSightingRepository = new PgSpeciesSightingRepository();
+const speciesRepository = new PgSpeciesRepository()
 
 // ── Services ─────────────────────────────────────────
-const authService = new AuthService();
-const speciesService = new SpeciesService()
-const speciesSighting = new SpeciesSightingService()
+const authService = new AuthService(userRepository);
+const speciesService = new SpeciesService(speciesRepository)
+const speciesSightingService = new SpeciesSightingService(speciesSightingRepository)
 
 
 // ── Controllers ──────────────────────────────────────
 export const authController = new AuthController(authService);
 export const speciesController = new SpeciesController(speciesService);
-export const speciesSightingController = new SpeciesSightingController(speciesSighting)
+export const speciesSightingController = new SpeciesSightingController(speciesSightingService)

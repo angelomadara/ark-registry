@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import BaseController from "./base.controller";
 import { AuthRequest } from "../middleware/auth.middleware";
-import { validateRegister, validateLogin } from "../middleware/requests/auth.requests";
+import { validateRegister, validateLogin } from "../middleware/validators/auth.validator";
 import { AuthService } from "../services/auth.service";
 
 export class AuthController extends BaseController {

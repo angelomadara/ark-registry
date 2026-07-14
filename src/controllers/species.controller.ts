@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { SpeciesService } from "../services/species.service";
 import BaseController from "./base.controller";
+import { validatePagination } from "../middleware/validators/pagination.validator";
 
 
 export class SpeciesController extends BaseController {
@@ -11,7 +12,13 @@ export class SpeciesController extends BaseController {
 
     async getAll(req: Request, res: Response, next: any) {
         try {
-            const species = await this.speciesService.getAllSpecies();
+            const validate = await this.validate(req, validatePagination)
+            if(validate) return this.sendValidationError(res, validate);
+
+            const page = parseInt(req.query.page as string, 10) || 1
+            const limit = parseInt(req.query.limit as string, 10) || 10
+
+            const species = await this.speciesService.getAllSpecies({page: page, limit: limit});
             return this.sendSuccess(res, species);
         } catch (error) {
             next(error);

@@ -1,12 +1,10 @@
 import { SpeciesSighting } from "../models/species-sighting.model";
-import { PgSpeciesSightingRepository } from "../repositories/postgres/PgSpeciesSightingRepository";
+import { PgSpeciesSightingRepository } from "../repositories";
 
 export class SpeciesSightingService {
-    private repo: PgSpeciesSightingRepository;
+    // private repo: PgSpeciesSightingRepository;
 
-    constructor(repo?: PgSpeciesSightingRepository) {
-        this.repo = repo || new PgSpeciesSightingRepository();
-    }
+    constructor(private readonly repoSpeciesSighting: PgSpeciesSightingRepository) {}
 
     async create(data: {
         user_id: string;
@@ -17,14 +15,14 @@ export class SpeciesSightingService {
         longitude?: number | null;
         date_taken: string;
     }): Promise<SpeciesSighting> {
-        return this.repo.create(data as any);
+        return this.repoSpeciesSighting.create(data as any);
     }
 
     async getAll(): Promise<SpeciesSighting[]> {
-        return this.repo.getAllWithSpecies();
+        return this.repoSpeciesSighting.getAllWithSpecies();
     }
 
     async getById(id: number): Promise<SpeciesSighting | null> {
-        return this.repo.findById(id);
+        return this.repoSpeciesSighting.findById(id);
     }
 }
