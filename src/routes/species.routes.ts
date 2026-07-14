@@ -1,9 +1,16 @@
 import { Router } from "express";
-import SpeciesController from "../controllers/species.controller";
+import upload from "../config/upload";
+import { authenticate } from "../middleware/auth.middleware";
+import { speciesController, speciesSightingController } from "../composition-root";
 
 const router = Router();
 
-router.get("/", SpeciesController.getAll.bind(SpeciesController));
-router.get("/:id", SpeciesController.getById.bind(SpeciesController));
+router.get("/", speciesController.getAll);
+
+router.post("/register", authenticate, upload.single("image"), speciesSightingController.register);
+router.get("/sightings", authenticate, speciesSightingController.getAll);
+router.get("/sightings/:id", authenticate, speciesSightingController.getById);
+
+router.get("/:id", speciesController.getById);
 
 export default router;
