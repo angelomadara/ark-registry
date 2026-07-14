@@ -1,20 +1,23 @@
 import { Species } from "../models/species.model";
 import { query } from "../config/database";
+import { PgSpeciesRepository } from "../repositories";
 
 export class SpeciesService {
-    async getAllSpecies(): Promise<Species[]> {
-        const result = await query(
-            "SELECT * FROM species WHERE deleted_at IS NULL ORDER BY id ASC",
-        );
-        return result.rows;
+
+    constructor(private readonly repoSpecies: PgSpeciesRepository){}
+
+    async getAllSpecies({ page, limit }: { page: number;  limit:number}): Promise<{items:Species[], total:number}> {
+        const species = this.repoSpecies.findAll({page: page, limit: limit});
+
+        return species;
+        // const result = await query(
+        //     "SELECT * FROM species WHERE deleted_at IS NULL ORDER BY id ASC",
+        // );
+        // return result.rows;
     }
 
     async getSpeciesById(id: number): Promise<Species | null> {
-        const result = await query(
-            "SELECT * FROM species WHERE id = $1 AND deleted_at IS NULL",
-            [id],
-        );
-        return result.rows[0] || null;
+        return this.repoSpecies.findById(id);
     }
 
     async createSpecies(
@@ -30,18 +33,16 @@ export class SpeciesService {
             common_name,
             iucn_status,
         } = speciesData;
-        const result = await query(
-            `INSERT INTO species (scientific_name, genus, specific_epithet, common_name, iucn_status)
-             VALUES ($1, $2, $3, $4, $5)
-             RETURNING *`,
-            [
-                scientific_name,
-                genus,
-                specific_epithet,
-                common_name,
-                iucn_status,
-            ],
-        );
-        return result.rows[0];
+
+        const species = await this.repoSpecies.create({
+            scientific_name,
+            genus,
+            specific_epithet,
+            common_name,
+            iucn_status,
+        });
+        return species;
     }
 }
+
+export default SpeciesService

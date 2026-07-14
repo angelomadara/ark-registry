@@ -1,4 +1,4 @@
--- migrate:up
+-- up migration
 
 -- Add name, scientific_name, date_taken columns to species_sightings
 -- for direct name entry (no longer requires species_id FK on new records)
@@ -7,7 +7,7 @@ ALTER TABLE species_sightings
   ADD COLUMN scientific_name VARCHAR(500),
   ADD COLUMN date_taken DATE;
 
--- migrate:down
+-- down migration
 
 ALTER TABLE species_sightings
   DROP COLUMN IF EXISTS name,
