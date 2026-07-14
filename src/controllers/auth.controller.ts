@@ -1,16 +1,17 @@
-import { Response, NextFunction } from "express";
+import { Response } from "express";
 import jwt from "jsonwebtoken";
 import BaseController from "./base.controller";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { validateRegister, validateLogin } from "../middleware/validators/auth.validator";
 import { AuthService } from "../services/auth.service";
+import { ControllerMethod } from "../types";
 
 export class AuthController extends BaseController {
     constructor(private readonly authService: AuthService) {
         super();
     }
 
-    async register(req: AuthRequest, res: Response, next: NextFunction) {
+    register: ControllerMethod = async (req, res, next) => {
         try {
             const validationErrors = await this.validate(req, validateRegister);
             if (validationErrors) {
@@ -34,7 +35,7 @@ export class AuthController extends BaseController {
         }
     }
 
-    async login(req: AuthRequest, res: Response, next: NextFunction) {
+    login: ControllerMethod = async (req, res, next) => {
         try {
             const validationErrors = await this.validate(req, validateLogin);
             if (validationErrors) {
@@ -70,9 +71,10 @@ export class AuthController extends BaseController {
         }
     }
 
-    async me(req: AuthRequest, res: Response, next: NextFunction) {
+    me: ControllerMethod = async (req, res, next) => {
         try {
-            const user = await this.authService.findById(req.user!.id);
+            const authReq = req as AuthRequest;
+            const user = await this.authService.findById(authReq.user!.id);
             if (!user) {
                 return this.sendNotFound(res, "User not found");
             }

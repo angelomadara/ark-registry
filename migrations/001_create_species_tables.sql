@@ -1,4 +1,4 @@
--- migrate:up
+-- up migration
 
 -- Create Species Table
 CREATE TABLE IF NOT EXISTS species (
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS species_local_names (
 CREATE INDEX IF NOT EXISTS idx_species_scientific_name ON species(scientific_name);
 CREATE INDEX IF NOT EXISTS idx_species_local_names_species_id ON species_local_names(species_id);
 
--- migrate:down
+-- down migration
 
 DROP TABLE IF EXISTS species_local_names;
 DROP TABLE IF EXISTS species;

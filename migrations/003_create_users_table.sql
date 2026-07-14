@@ -1,4 +1,4 @@
--- migrate:up
+-- up migration
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -12,6 +12,6 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 
--- migrate:down
+-- down migration
 
 DROP TABLE IF EXISTS users;

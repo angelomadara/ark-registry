@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { SpeciesService } from "../services/species.service";
 import BaseController from "./base.controller";
 import { validatePagination } from "../middleware/validators/pagination.validator";
+import { ControllerMethod } from "../types";
 
 
 export class SpeciesController extends BaseController {
@@ -10,7 +11,7 @@ export class SpeciesController extends BaseController {
         super()
     }
 
-    async getAll(req: Request, res: Response, next: any) {
+    getAll: ControllerMethod = async(req, res) =>  {
         try {
             const validate = await this.validate(req, validatePagination)
             if(validate) return this.sendValidationError(res, validate);
@@ -21,11 +22,11 @@ export class SpeciesController extends BaseController {
             const species = await this.speciesService.getAllSpecies({page: page, limit: limit});
             return this.sendSuccess(res, species);
         } catch (error) {
-            next(error);
+            return this.sendError(res, "Failed to fetch all the species")
         }
     }
 
-    async getById(req: Request, res: Response, next: any) {
+    getById: ControllerMethod = async(req, res) => {
         try {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
@@ -37,7 +38,7 @@ export class SpeciesController extends BaseController {
             }
             return this.sendSuccess(res, species);
         } catch (error) {
-            next(error);
+            return this.sendError(res, "Failed to fetch species by ID")
         }
     }
 }

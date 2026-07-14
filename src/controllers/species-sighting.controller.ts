@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 import BaseController from "./base.controller";
@@ -6,6 +6,7 @@ import { SpeciesSightingService } from "../services/species-sighting.service";
 import r2Client, { R2_BUCKET, R2_PUBLIC_URL } from "../config/r2";
 import path from "path";
 import { validateRegisterSighting } from "../middleware/validators/species-sighting.validator";
+import { ControllerMethod } from "../types";
 
 export class SpeciesSightingController extends BaseController {
 
@@ -14,7 +15,7 @@ export class SpeciesSightingController extends BaseController {
     }
 
 
-    async register(req: Request, res: Response, next: any) {
+    register: ControllerMethod = async (req, res, next) => {
         try {
             const validationErrors = await this.validate(req, validateRegisterSighting);
             if (validationErrors) {
@@ -68,7 +69,7 @@ export class SpeciesSightingController extends BaseController {
         }
     }
 
-    async getAll(req: Request, res: Response, next: any) {
+    getAll: ControllerMethod = async (req, res, next) => {
         try {
             const sightings = await this.speciesSightingService.getAll();
             return this.sendSuccess(res, sightings);
@@ -77,7 +78,7 @@ export class SpeciesSightingController extends BaseController {
         }
     }
 
-    async getById(req: Request, res: Response, next: any) {
+    getById: ControllerMethod = async (req, res, next) => {
         try {
             const id = parseInt(req.params.id, 10);
             if (isNaN(id)) {
