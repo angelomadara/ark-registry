@@ -7,7 +7,7 @@
  *   add_xxx_to_yyy         → ALTER TABLE ... ADD COLUMN template
  *   remove_xxx_from_yyy    → ALTER TABLE ... DROP COLUMN template
  *   drop_xxx_table         → DROP TABLE template
- *   default                → bare -- migrate:up / -- migrate:down
+ *   default                → bare -- up migration / -- down migration
  *
  * Usage:
  *   npm run make:migration create_habitats_table
@@ -71,7 +71,7 @@ function buildTemplate(name: string): string {
 
   switch (type) {
     case "create":
-      return `-- migrate:up
+      return `-- up migration
 
 CREATE TABLE IF NOT EXISTS ${tableName} (
     id SERIAL PRIMARY KEY,
@@ -79,38 +79,38 @@ CREATE TABLE IF NOT EXISTS ${tableName} (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- migrate:down
+-- down migration
 
 DROP TABLE IF EXISTS ${tableName};`;
 
     case "add":
-      return `-- migrate:up
+      return `-- up migration
 
 ALTER TABLE ${table}
     ADD COLUMN ${column} VARCHAR(255);
 
--- migrate:down
+-- down migration
 
 ALTER TABLE ${table}
     DROP COLUMN IF EXISTS ${column};`;
 
     case "remove":
-      return `-- migrate:up
+      return `-- up migration
 
 ALTER TABLE ${table}
     DROP COLUMN IF EXISTS ${column};
 
--- migrate:down
+-- down migration
 
 ALTER TABLE ${table}
     ADD COLUMN ${column} VARCHAR(255);`;
 
     case "drop":
-      return `-- migrate:up
+      return `-- up migration
 
 DROP TABLE IF EXISTS ${tableName};
 
--- migrate:down
+-- down migration
 
 CREATE TABLE IF NOT EXISTS ${tableName} (
     id SERIAL PRIMARY KEY,
@@ -119,11 +119,11 @@ CREATE TABLE IF NOT EXISTS ${tableName} (
 );`;
 
     default:
-      return `-- migrate:up
+      return `-- up migration
 
 -- TODO: write your migration logic here
 
--- migrate:down
+-- down migration
 
 -- TODO: write the rollback here`;
   }

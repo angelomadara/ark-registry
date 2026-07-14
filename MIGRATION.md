@@ -28,7 +28,7 @@ The generator detects intent from the name and scaffolds the right template:
 | `npm run make:migration `**`add_colour_to_habitats`** | `ALTER TABLE habitats ADD COLUMN colour ...` |
 | `npm run make:migration `**`remove_flag_from_sightings`** | `ALTER TABLE sightings DROP COLUMN flag` |
 | `npm run make:migration `**`drop_temp_table`** | `DROP TABLE IF EXISTS temp` |
-| `npm run make:migration `**`do_something_custom`** | Bare `-- migrate:up / down` skeleton |
+| `npm run make:migration `**`do_something_custom`** | Bare `-- up migration / down` skeleton |
 
 All names are converted to **snake_case** automatically. CamelCase names like `createUsersTable` work too.
 
@@ -59,7 +59,7 @@ migrations/20260714171600_add_iucn_status_to_species.sql
 ### CREATE TABLE template
 
 ```sql
--- migrate:up
+-- up migration
 
 CREATE TABLE IF NOT EXISTS habitats (
     id SERIAL PRIMARY KEY,
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS habitats (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- migrate:down
+-- down migration
 
 DROP TABLE IF EXISTS habitats;
 ```
@@ -75,12 +75,12 @@ DROP TABLE IF EXISTS habitats;
 ### ADD COLUMN template
 
 ```sql
--- migrate:up
+-- up migration
 
 ALTER TABLE species
     ADD COLUMN iucn_status VARCHAR(50);
 
--- migrate:down
+-- down migration
 
 ALTER TABLE species
     DROP COLUMN IF EXISTS iucn_status;
@@ -89,16 +89,16 @@ ALTER TABLE species
 ### Custom migration (bare template)
 
 ```sql
--- migrate:up
+-- up migration
 
 -- TODO: write your migration logic here
 
--- migrate:down
+-- down migration
 
 -- TODO: write the rollback here
 ```
 
-**Important:** Always fill in both `-- migrate:up` and `-- migrate:down`. The down section is what makes rollback possible.
+**Important:** Always fill in both `-- up migration` and `-- down migration`. The down section is what makes rollback possible.
 
 ---
 
@@ -153,7 +153,7 @@ npm run migrate:rollback
 npm run migrate:rollback 3
 ```
 
-This only works if each migration has a complete `-- migrate:down` section.
+This only works if each migration has a complete `-- down migration` section.
 
 ---
 
