@@ -1,8 +1,12 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import speciesRoutes from "./routes/species.routes";
+import pool from "./config/database";
+// import speciesRoutes from "./routes/species.routes";
+// import authRoutes from "./routes/auth.routes";
+import router from "./routes/index.routes";
 import { errorHandler } from "./middleware/error.middleware";
+import { migrateOnStartup } from "./scripts/migrate";
 
 dotenv.config();
 
@@ -12,7 +16,26 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/species", speciesRoutes);
+// Test database connection
+pool.connect((err, conn) => {
+    if (err) {
+        console.error("Error acquiring client", err.stack);
+    } else {
+        console.log("Successfully connected to PostgreSQL database");
+        conn?.release();
+
+        // Auto-apply pending migrations on startup
+        migrateOnStartup(pool).then(() => {
+            console.log("Migrations up to date");
+        }).catch((migrateErr) => {
+            console.error("Migration error:", migrateErr);
+        });
+    }
+});
+
+// app.use("/api/auth", authRoutes);
+// app.use("/api/species", speciesRoutes);
+app.use("/api", router)
 
 app.get("/", (req: Request, res: Response) => {
     res.json({
