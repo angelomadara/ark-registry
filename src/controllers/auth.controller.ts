@@ -1,17 +1,17 @@
-import { Response, NextFunction } from "express";
+import { Response } from "express";
 import jwt from "jsonwebtoken";
 import BaseController from "./base.controller";
-import { AuthService } from "../services/auth.service";
 import { AuthRequest } from "../middleware/auth.middleware";
-import {
-    validateRegister,
-    validateLogin,
-} from "../middleware/requests/auth.requests";
+import { validateRegister, validateLogin } from "../middleware/validators/auth.validator";
+import { AuthService } from "../services/auth.service";
+import { ControllerMethod } from "../types";
 
-const authService = new AuthService();
+export class AuthController extends BaseController {
+    constructor(private readonly authService: AuthService) {
+        super();
+    }
 
-class AuthController extends BaseController {
-    async register(req: AuthRequest, res: Response, next: NextFunction) {
+    register: ControllerMethod = async (req, res, next) => {
         try {
             const validationErrors = await this.validate(req, validateRegister);
             if (validationErrors) {
@@ -21,13 +21,13 @@ class AuthController extends BaseController {
             const { username, password } = req.body;
 
             // Check if username already exists
-            const existingUser = await authService.findByUsername(username);
+            const existingUser = await this.authService.findByUsername(username);
             if (existingUser) {
                 return this.sendBadRequest(res, "Username already exists");
             }
 
             // Create user
-            const user = await authService.create(username, password);
+            const user = await this.authService.create(username, password);
             const { password_hash, ...publicUser } = user;
             return this.sendCreated(res, publicUser);
         } catch (error) {
@@ -35,7 +35,7 @@ class AuthController extends BaseController {
         }
     }
 
-    async login(req: AuthRequest, res: Response, next: NextFunction) {
+    login: ControllerMethod = async (req, res, next) => {
         try {
             const validationErrors = await this.validate(req, validateLogin);
             if (validationErrors) {
@@ -44,30 +44,19 @@ class AuthController extends BaseController {
 
             const { username, password } = req.body;
 
-            const user = await authService.findByUsername(username);
+            const user = await this.authService.findByUsername(username);
             if (!user) {
-                return this.sendUnauthorized(
-                    res,
-                    "Invalid username or password",
-                );
+                return this.sendUnauthorized(res, "Invalid username or password");
             }
 
-            const isValid = await authService.validatePassword(
-                password,
-                user.password_hash,
-            );
+            const isValid = await this.authService.validatePassword(password, user.password_hash);
             if (!isValid) {
-                return this.sendUnauthorized(
-                    res,
-                    "Invalid username or password",
-                );
+                return this.sendUnauthorized(res, "Invalid username or password");
             }
 
-            const token = jwt.sign(
-                { id: user.id, username: user.username, role: user.role },
-                process.env.JWT_SECRET || "fallback-secret",
-                { expiresIn: "7d" },
-            );
+            const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET || "fallback-secret", {
+                expiresIn: "7d",
+            });
 
             return this.sendSuccess(res, {
                 token,
@@ -82,9 +71,10 @@ class AuthController extends BaseController {
         }
     }
 
-    async me(req: AuthRequest, res: Response, next: NextFunction) {
+    me: ControllerMethod = async (req, res, next) => {
         try {
-            const user = await authService.findById(req.user!.id);
+            const authReq = req as AuthRequest;
+            const user = await this.authService.findById(authReq.user!.id);
             if (!user) {
                 return this.sendNotFound(res, "User not found");
             }
@@ -95,5 +85,3 @@ class AuthController extends BaseController {
         }
     }
 }
-
-export default new AuthController();
