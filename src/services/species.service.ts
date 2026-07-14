@@ -45,3 +45,5 @@ export class SpeciesService {
         return result.rows[0];
     }
 }
+
+export default SpeciesService

@@ -7,9 +7,13 @@ import r2Client, { R2_BUCKET, R2_PUBLIC_URL } from "../config/r2";
 import path from "path";
 import { validateRegisterSighting } from "../middleware/requests/species-sighting.requests";
 
-const speciesSightingService = new SpeciesSightingService();
+export class SpeciesSightingController extends BaseController {
 
-class SpeciesSightingController extends BaseController {
+    constructor(private readonly speciesSightingService: SpeciesSightingService) {
+        super()
+    }
+
+
     async register(req: Request, res: Response, next: any) {
         try {
             const validationErrors = await this.validate(req, validateRegisterSighting);
@@ -48,7 +52,7 @@ class SpeciesSightingController extends BaseController {
             // Create DB record (image_path column stores the full R2 URL).
             // Field values are already coerced by validateRegisterSighting,
             // and lat/lng were parsed from EXIF in the validator.
-            const sighting = await speciesSightingService.create({
+            const sighting = await this.speciesSightingService.create({
                 user_id: req.body.user_id,
                 name: req.body.name ?? 'Unknown',
                 notes: req.body.description ?? null,
@@ -66,7 +70,7 @@ class SpeciesSightingController extends BaseController {
 
     async getAll(req: Request, res: Response, next: any) {
         try {
-            const sightings = await speciesSightingService.getAll();
+            const sightings = await this.speciesSightingService.getAll();
             return this.sendSuccess(res, sightings);
         } catch (error) {
             next(error);
@@ -79,7 +83,7 @@ class SpeciesSightingController extends BaseController {
             if (isNaN(id)) {
                 return this.sendBadRequest(res, "Invalid sighting ID");
             }
-            const sighting = await speciesSightingService.getById(id);
+            const sighting = await this.speciesSightingService.getById(id);
             if (!sighting) {
                 return this.sendNotFound(res, "Sighting not found");
             }
@@ -89,5 +93,3 @@ class SpeciesSightingController extends BaseController {
         }
     }
 }
-
-export default new SpeciesSightingController();

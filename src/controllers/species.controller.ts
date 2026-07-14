@@ -2,12 +2,16 @@ import { Request, Response } from "express";
 import { SpeciesService } from "../services/species.service";
 import BaseController from "./base.controller";
 
-const speciesService = new SpeciesService();
 
-class SpeciesController extends BaseController {
+export class SpeciesController extends BaseController {
+
+    constructor(private readonly speciesService: SpeciesService) {
+        super()
+    }
+
     async getAll(req: Request, res: Response, next: any) {
         try {
-            const species = await speciesService.getAllSpecies();
+            const species = await this.speciesService.getAllSpecies();
             return this.sendSuccess(res, species);
         } catch (error) {
             next(error);
@@ -20,7 +24,7 @@ class SpeciesController extends BaseController {
             if (isNaN(id)) {
                 return this.sendBadRequest(res, "Invalid species ID");
             }
-            const species = await speciesService.getSpeciesById(id);
+            const species = await this.speciesService.getSpeciesById(id);
             if (!species) {
                 return this.sendNotFound(res, "Species not found");
             }
@@ -30,5 +34,3 @@ class SpeciesController extends BaseController {
         }
     }
 }
-
-export default new SpeciesController();
