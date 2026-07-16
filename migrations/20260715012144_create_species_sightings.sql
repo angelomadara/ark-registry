@@ -1,6 +1,5 @@
 -- up migration
 
--- Create Species Sightings Table
 CREATE TABLE IF NOT EXISTS species_sightings (
     id SERIAL PRIMARY KEY,
     user_id VARCHAR(255) NOT NULL,
@@ -9,6 +8,7 @@ CREATE TABLE IF NOT EXISTS species_sightings (
     latitude DECIMAL(10, 7),
     longitude DECIMAL(10, 7),
     notes TEXT,
+    date_taken DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP WITH TIME ZONE
