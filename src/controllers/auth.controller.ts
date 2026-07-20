@@ -1,8 +1,7 @@
 import { Response } from "express";
-import jwt from "jsonwebtoken";
 import BaseController from "./base.controller";
 import { AuthRequest } from "../middleware/auth.middleware";
-import { validateRegister, validateLogin } from "../middleware/validators/auth.validator";
+import { validateRegister, validateLogin, validateRefresh } from "../middleware/validators/auth.validator";
 import { AuthService } from "../services/auth.service";
 import { ControllerMethod } from "../types";
 
@@ -44,28 +43,44 @@ export class AuthController extends BaseController {
 
             const { username, password } = req.body;
 
-            const user = await this.authService.findByUsername(username);
-            if (!user) {
-                return this.sendUnauthorized(res, "Invalid username or password");
-            }
-
-            const isValid = await this.authService.validatePassword(password, user.password_hash);
-            if (!isValid) {
-                return this.sendUnauthorized(res, "Invalid username or password");
-            }
-
-            const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, process.env.JWT_SECRET || "fallback-secret", {
-                expiresIn: "7d",
-            });
+            const result = await this.authService.login(username, password);
 
             return this.sendSuccess(res, {
-                token,
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    role: user.role,
-                },
+                accessToken: result.accessToken,
+                refreshToken: result.refreshToken,
+                user: result.user,
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    refresh: ControllerMethod = async (req, res, next) => {
+        try {
+            const validationErrors = await this.validate(req, validateRefresh);
+            if (validationErrors) {
+                return this.sendValidationError(res, validationErrors);
+            }
+
+            const { refreshToken } = req.body;
+            const tokens = await this.authService.refreshAccessToken(refreshToken);
+
+            return this.sendSuccess(res, tokens);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    logout: ControllerMethod = async (req, res, next) => {
+        try {
+            const authReq = req as AuthRequest;
+            if (!authReq.user) {
+                return this.sendUnauthorized(res, "Authentication required");
+            }
+
+            await this.authService.logout(authReq.user.id);
+
+            return this.sendSuccess(res, null, "Logged out successfully");
         } catch (error) {
             next(error);
         }
