@@ -77,10 +77,11 @@ export class AuthService {
         if (!process.env.JWT_SECRET) {
             throw new Error("JWT_SECRET environment variable is not set");
         }
+        const expiresIn = process.env.JWT_ACCESS_EXPIRES || "15m";
         return jwt.sign(
             { id: user.id, username: user.username, role: user.role },
             process.env.JWT_SECRET,
-            { algorithm: "HS256", expiresIn: "15m" },
+            { algorithm: "HS256", expiresIn },
         );
     }
 
@@ -88,8 +89,9 @@ export class AuthService {
         const rawToken = crypto.randomBytes(40).toString("hex");
         const hash = crypto.createHash("sha256").update(rawToken).digest("hex");
 
+        const days = parseInt(process.env.JWT_REFRESH_EXPIRES_DAYS || "7", 10);
         const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+        expiresAt.setDate(expiresAt.getDate() + days);
 
         await this.refreshTokenRepo.create({
             user_id: userId,
