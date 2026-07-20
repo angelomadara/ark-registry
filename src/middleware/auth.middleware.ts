@@ -20,9 +20,13 @@ export const authenticate = (
     const token = authHeader.split(" ")[1];
 
     try {
+        if (!process.env.JWT_SECRET) {
+            throw new Error("JWT_SECRET environment variable is not set");
+        }
         const decoded = jwt.verify(
             token,
-            process.env.JWT_SECRET || "fallback-secret",
+            process.env.JWT_SECRET,
+            { algorithms: ["HS256"] },
         ) as any;
         req.user = {
             id: decoded.id,

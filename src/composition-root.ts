@@ -10,7 +10,7 @@
 import { AuthController } from "./controllers/auth.controller";
 import { SpeciesSightingController } from "./controllers/species-sighting.controller";
 import { SpeciesController } from "./controllers/species.controller";
-import { PgSpeciesRepository, PgSpeciesSightingRepository, PgUserRepository } from "./repositories";
+import { PgRefreshTokenRepository, PgSpeciesRepository, PgSpeciesSightingRepository, PgUserRepository } from "./repositories";
 import { AuthService } from "./services/auth.service";
 import { SpeciesSightingService } from "./services/species-sighting.service";
 import { SpeciesService } from "./services/species.service";
@@ -19,9 +19,10 @@ import { SpeciesService } from "./services/species.service";
 const userRepository = new PgUserRepository()
 const speciesSightingRepository = new PgSpeciesSightingRepository();
 const speciesRepository = new PgSpeciesRepository()
+const refreshTokenRepository = new PgRefreshTokenRepository();
 
 // ── Services ─────────────────────────────────────────
-const authService = new AuthService(userRepository);
+const authService = new AuthService(userRepository, refreshTokenRepository);
 const speciesService = new SpeciesService(speciesRepository)
 const speciesSightingService = new SpeciesSightingService(speciesSightingRepository)
 

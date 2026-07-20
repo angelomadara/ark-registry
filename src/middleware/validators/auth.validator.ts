@@ -26,3 +26,10 @@ export const validateLogin: ValidationChain[] = [
     body("username").notEmpty().withMessage("Username is required"),
     body("password").notEmpty().withMessage("Password is required"),
 ];
+
+/**
+ * Validation rules for `POST /api/v1/auth/refresh`.
+ */
+export const validateRefresh: ValidationChain[] = [
+    body("refreshToken").notEmpty().withMessage("Refresh token is required"),
+];
