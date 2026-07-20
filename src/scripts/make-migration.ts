@@ -20,8 +20,8 @@ import path from "path";
 
 const MIGRATIONS_DIR = path.resolve(__dirname, "../../migrations");
 
-function pad(n: number): string {
-  return n.toString().padStart(2, "0");
+function pad(n: number, len: number = 2): string {
+  return n.toString().padStart(len, "0");
 }
 
 function timestamp(): string {
@@ -32,7 +32,8 @@ function timestamp(): string {
     `${pad(d.getUTCDate())}` +
     `${pad(d.getUTCHours())}` +
     `${pad(d.getUTCMinutes())}` +
-    `${pad(d.getUTCSeconds())}`
+    `${pad(d.getUTCSeconds())}` +
+    `${pad(d.getUTCMilliseconds(), 3)}`
   );
 }
 
