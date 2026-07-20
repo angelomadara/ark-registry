@@ -24,5 +24,4 @@ jobs:
             git checkout ${{ github.ref_name }}
             docker compose build ark-backend
             docker compose up -d --no-deps ark-backend
-            docker exec ark-backend npx tsx src/scripts/migrate.ts up
             echo "Deploy of ${{ github.ref_name }} complete"
