@@ -7,9 +7,9 @@ const DIRECTION = process.argv[2] as "up" | "down" | undefined;
 const COUNT = process.argv[3] ? parseInt(process.argv[3], 10) : undefined;
 
 async function main() {
+  // Construct connection string from env vars (loaded from .env via dotenv)
   const dbUrl =
-    `postgresql://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}` ||
-    process.env.DATABASE_URL;
+    `postgresql://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
 
   const pool = new Pool({ connectionString: dbUrl });
   const client = await pool.connect();
@@ -24,7 +24,7 @@ async function main() {
       count: direction === "down" ? COUNT ?? 1 : COUNT ?? Infinity,
       dir: "migrations",
       migrationsTable: "pgmigrations",
-      ignorePattern: "(\\.*)|(.*\\.md)$",
+      ignorePattern: "(\\..*)|(.*\\.md)$",
     });
 
     const ran = Array.isArray(result) ? result : [];
@@ -53,7 +53,7 @@ export async function migrateOnStartup(pool: Pool): Promise<void> {
       count: Infinity,
       dir: "migrations",
       migrationsTable: "pgmigrations",
-      ignorePattern: "(\\.*)|(.*\\.md)$",
+      ignorePattern: "(\\..*)|(.*\\.md)$",
     });
     const ran = Array.isArray(result) ? result : [];
     if (ran.length > 0) {
