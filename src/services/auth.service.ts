@@ -81,7 +81,7 @@ export class AuthService {
         return jwt.sign(
             { id: user.id, username: user.username, role: user.role },
             process.env.JWT_SECRET,
-            { algorithm: "HS256", expiresIn },
+            { algorithm: "HS256", expiresIn } as jwt.SignOptions,
         );
     }
 
@@ -89,9 +89,14 @@ export class AuthService {
         const rawToken = crypto.randomBytes(40).toString("hex");
         const hash = crypto.createHash("sha256").update(rawToken).digest("hex");
 
-        const days = parseInt(process.env.JWT_REFRESH_EXPIRES_DAYS || "7", 10);
-        const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + days);
+        const days = parseInt(process.env.JWT_REFRESH_EXPIRES_DAYS || "365", 10);
+        let expiresAt: Date | null;
+        if (days <= 0) {
+            expiresAt = null; // never expires
+        } else {
+            expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + days);
+        }
 
         await this.refreshTokenRepo.create({
             user_id: userId,
