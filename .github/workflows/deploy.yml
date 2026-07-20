@@ -24,4 +24,6 @@ jobs:
             git checkout ${{ github.ref_name }}
             docker compose --env-file .env.production build ark-backend
             docker compose --env-file .env.production up -d --no-deps ark-backend
+            git fetch origin dev:dev
+            git checkout dev
             echo "Deploy of ${{ github.ref_name }} complete"
