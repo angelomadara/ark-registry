@@ -1,0 +1,28 @@
+name: Deploy on Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd ~/Github/the-ark-registry
+            git fetch --tags
+            git checkout ${{ github.ref_name }}
+            docker compose build ark-backend
+            docker compose up -d --no-deps ark-backend
+            docker exec ark-backend npx tsx src/scripts/migrate.ts up
+            echo "Deploy of ${{ github.ref_name }} complete"
