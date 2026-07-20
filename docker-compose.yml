@@ -62,6 +62,48 @@ services:
             timeout: 5s
             retries: 5
 
+    ark-backend-staging:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: ark-backend-staging
+        restart: unless-stopped
+        networks:
+            - ark-network
+        depends_on:
+            ark-db:
+                condition: service_healthy
+        ports:
+            - "3082:3000"
+        environment:
+            - NODE_ENV=development
+            - DB_HOST=ark-db
+            - DB_PORT=5432
+            - DB_DATABASE=ark_registry_staging
+            - DB_USERNAME=${POSTGRES_USER}
+            - DB_PASSWORD=${POSTGRES_PASSWORD}
+            - JWT_SECRET=${JWT_SECRET}
+            - JWT_ACCESS_EXPIRES=${JWT_ACCESS_EXPIRES}
+            - JWT_REFRESH_EXPIRES_DAYS=${JWT_REFRESH_EXPIRES_DAYS}
+            - R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
+            - R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY}
+            - R2_ENDPOINT=${R2_ENDPOINT}
+            - R2_BUCKET_NAME=${R2_BUCKET_NAME}
+            - R2_PUBLIC_URL=${R2_PUBLIC_URL}
+            - MAIL_MAILER=${MAIL_MAILER}
+            - MAIL_HOST=${MAIL_HOST}
+            - MAIL_PORT=${MAIL_PORT}
+            - MAIL_USERNAME=${MAIL_USERNAME}
+            - MAIL_PASSWORD=${MAIL_PASSWORD}
+            - MAIL_ENCRYPTION=${MAIL_ENCRYPTION}
+            - MAIL_FROM=${MAIL_FROM}
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+            interval: 15s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+
 networks:
     ark-network:
         external: true
