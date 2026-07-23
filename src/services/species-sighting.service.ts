@@ -9,6 +9,7 @@ export class SpeciesSightingService {
     async create(data: {
         user_id: string;
         name: string;
+        scientific_name?: string | null;
         notes?: string | null;
         image_path: string;
         latitude?: number | null;
