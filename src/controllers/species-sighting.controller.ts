@@ -56,6 +56,7 @@ export class SpeciesSightingController extends BaseController {
             const sighting = await this.speciesSightingService.create({
                 user_id: req.body.user_id,
                 name: req.body.name ?? 'Unknown',
+                scientific_name: req.body.scientific_name ?? null,
                 notes: req.body.description ?? null,
                 image_path: imageUrl,
                 latitude: gps?.latitude ?? null,
