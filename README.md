@@ -26,14 +26,20 @@ A global biodiversity sentinel project focused on rare and endangered species. T
     ```
    **Note:** When running via Docker, ensure `DB_HOST=ark-db` in your `.env` file to allow the backend to communicate with the database container.
 
-3. **Launch the Application**
+3. **Create docker network**
+    Create a new network 
+    ```bash
+    sudo docker network create ark-network
+    ```
+
+4. **Launch the Application**
    Start the containers in detached mode:
 
     ```bash
     docker compose up -d --build
     ```
 
-4. **Verify Deployment**
+5. **Verify Deployment**
    The backend is mapped to host port `3080`. Test the connection:
 
     ```bash
