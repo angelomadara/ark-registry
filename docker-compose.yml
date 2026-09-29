@@ -43,7 +43,8 @@ services:
 
     ark-db:
         # platform: linux/amd64
-        image: postgis/postgis:16-3.5-alpine
+        # image: postgis/postgis:16-3.5-alpine
+        image: imresamu/postgis:16-3.6-alpine3.22
         container_name: ark-db
         restart: unless-stopped
         volumes:
